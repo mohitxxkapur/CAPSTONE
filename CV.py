@@ -1,3 +1,10 @@
+#Mohit Kapur
+#Developed for ELG4192 - Electrical Engineering Final Capstone Project
+
+#this is the first iteration of the CV code.
+#currently this uses an aglorithm developed by myself to determine the change in users position to send to the sensors
+#The program uses facial recognition currently, as a machine learning algorithm for shoulders has not been developed for the project yet
+#currently the script will constantly take the y value of a users face and move when the y position is outside of pre specified bounds
 import cv2
 import sys
 
@@ -29,7 +36,7 @@ while True:
         flags=cv2.CASCADE_SCALE_IMAGE
     )
     yyy = 0
-    # Draw a rectangle around the faces
+    #Draw a rectangle around the faces
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
         cv2.rectangle(frame, (x, y-35),(x+w, y), (0,255,0), -2)
