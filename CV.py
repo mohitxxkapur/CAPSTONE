@@ -11,11 +11,35 @@ import sys
 val = 0
 ylst = []
 
-
 #function to append the face y value to a list for processing
 def lst(ypos, yy):
     ypos.append(yy)
 
+#the following two functions are for the actuators. Right now, it has a print statement as a placeholder. 
+def moveUp():
+    print("Move system up")
+
+def moveDown():
+    print("Move system down")
+
+def moveCheck(lst):
+    x = (len(lst)/2)
+    A= lst[:len(lst)//2]
+    B= lst[len(lst)//2:]
+    #print(A)
+    #print(B)
+    a = sum(A)/len(A)
+    b = sum(B)/len(B)
+    #print(a,b)
+    if a-b >= -5 and a-b <= 5 : #user didnt move much
+        print("no need to move") #height remains the same
+    elif a - b > 5: #user moved up
+        moveUp()
+    elif a - b < -5 :#user moved down
+        moveDown()
+    
+    #to optimize this function: connect the camera to this script, determine the ideal positions and from there set the bounds accordingly
+    #need to figure out a tolerance value.
 
 cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
@@ -44,6 +68,14 @@ while True:
         #print (y)
         #ypos.append(y)
         #print (ypos)
+
+        #These two if statements are for checking the bounds of the detected face. 
+        if (y <= 25):
+            moveUp()
+
+        if (y >= 300):
+            moveDown()
+        
         if (len(ylst) < 100):
             if (len(ylst) == 1 or len(ylst) == 0):
                 lst(ylst, y)
@@ -51,8 +83,11 @@ while True:
                 i = len(ylst)
                 lst(ylst, y)
 
-        elif (len(ylst) == 100):
-            #print("at 100: " + str(ylst)) all print statments are for debugging
+        if len(ylst) == 100:
+            moveCheck(ylst)
+
+        if (len(ylst) == 100):
+            #print("at 100: " + str(ylst)) #all print statments are for debugging
             i = -1
             spare = []
             for i in range(50):

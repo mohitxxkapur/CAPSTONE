@@ -6,6 +6,8 @@
 val = 0
 lst = []
 counter = 0
+avg1 = 0
+avg2 = 0
 
 import random
 
@@ -26,26 +28,41 @@ def rng(lim):
 def fk(lst, xxx):
     lst.append(xxx)
 
+def blah(lst):
+    x = (len(lst)/2)
+    A= lst[:len(lst)//2]
+    B= lst[len(lst)//2:]
+    print(A)
+    print(B)
+    a = sum(A)/len(A)
+    b = sum(B)/len(B)
+    print(a,b)
+    if a > b: #in our case, this means that the user moved up
+        print('Move up')
+    elif a < b: #in our case, this means that the user moved down
+        print('Move down')
+
 #main counter, we can set 200 to any value necessary, same with the actual desired list as well
-while(counter < 200):
-    if (len(lst)<50):
+while(counter < 20):
+    if (len(lst)<10):
         if (len(lst) == 1 or len(lst)==0 ):
             val = rng(20)
             fk(lst, val)
         else:
-            i = len(lst)
-            if (lst[i-2] < lst [i-1]):
-                #print("move down")
-                pass
-            elif (lst[i-2] > lst [i-1]):
-                #print("move up")
-                pass
+            # i = len(lst)
+            # if (lst[i-2] < lst [i-1]):
+            #     #print("move down")
+            #     pass
+            # elif (lst[i-2] > lst [i-1]):
+            #     #print("move up")
+            #     pass
             val = rng(20)
             fk(lst, val)
 
+    if (len(lst) == 10):
+        blah(lst)
 
-
-    elif (len(lst) == 50):
+    if (len(lst) == 10):
         # xx = lst[len(lst)-1]
         # lst2 = lst
         # lst = []
@@ -54,6 +71,7 @@ while(counter < 200):
         #multiple element?
 
         #this is where the swap takes place
+        #blah(lst)
         print("at 50: " + str(lst))
         i = -1
         lst2=[]
