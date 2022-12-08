@@ -39,7 +39,7 @@ def moveCheck(lst):
         moveDown()
     
     #to optimize this function: connect the camera to this script, determine the ideal positions and from there set the bounds accordingly
-    #need to figure out a tolerance value.
+    #figure out what values actually entail movement, also look into updating the refresh rate. that might involve updating the bounds. 
 
 cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)

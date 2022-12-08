@@ -32,11 +32,11 @@ def blah(lst):
     x = (len(lst)/2)
     A= lst[:len(lst)//2]
     B= lst[len(lst)//2:]
-    print(A)
-    print(B)
+    #print(A)
+    #print(B)
     a = sum(A)/len(A)
     b = sum(B)/len(B)
-    print(a,b)
+    #print(a,b)
     if a > b: #in our case, this means that the user moved up
         print('Move up')
     elif a < b: #in our case, this means that the user moved down
