@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <wiringPi.h>
+
+#define HEIGHT_TOLERANCE 5 // allowed height difference between the two actuators
+#define TRIG_PIN_1 0 // GPIO pin for TRIG of sensor 1
+#define ECHO_PIN_1 1 // GPIO pin for ECHO of sensor 1
+#define TRIG_PIN_2 2 // GPIO pin for TRIG of sensor 2
+#define ECHO_PIN_2 3 // GPIO pin for ECHO of sensor 2
+#define MAX_DISTANCE 200 // maximum distance the sensors can measure
+#define TIMEOUT MAX_DISTANCE * 60 // maximum time to wait for echo signal
+#define ACTUATOR_1_UP_PIN 4 // GPIO pin to control the up movement of actuator 1
+#define ACTUATOR_1_DOWN_PIN 5 // GPIO pin to control the down movement of actuator 1
+#define ACTUATOR_2_UP_PIN 6 // GPIO pin to control the up movement of actuator 2
+#define ACTUATOR_2_DOWN_PIN 7 // GPIO pin to control the down movement of actuator 2
+
+// Function to initialize the wiringPi library
+void init_wiringPi() {
+  if (wiringPiSetup() == -1) {
+    printf("Error initializing wiringPi\n");
+    return;
+  }
+}
+
+// Function to read height from infrared sensor
+int read_height_from_sensor(int trig_pin, int echo_pin) {
+  long duration, distance;
+
+  // Trigger the sensor
+  digitalWrite(trig_pin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin, LOW);
+
+  // Wait for echo signal
+  duration = pulseIn(echo_pin, HIGH, TIMEOUT);
+
+  // Check if the reading is valid
+  if (duration == 0) {
+    printf("Error reading from sensor, no echo received\n");
+    return -1;
+  }
+
+  // Calculate distance
+  distance = duration / 29 / 2;
+
+  // Check if the calculated distance is within the maximum distance
+  if (distance > MAX_DISTANCE) {
+    printf("Error reading from sensor, distance out of range\n");
+    return -1;
+  }
+
+  return distance;
+}
+
+// Move Actuator Up
+void move_actuator_up(int up_pin, int down_pin) {
+  digitalWrite(down_pin, LOW);
+  digitalWrite(up_pin, HIGH);
+  delay(1000); // move for 1 second
+  digitalWrite(up_pin, LOW);
+}
+
+// Move Actuator Down
+void move_actuator_down(int up_pin, int down_pin) {
+  digitalWrite(up_pin, LOW);
+  digitalWrite(down_pin, HIGH);
+  delay(1000); // move for 1 second
+  digitalWrite(down_pin, LOW);
+}
+
+int main() {
+  int height_1, height_2; // heights of the two actuators
+  int height_diff; // difference in heights between the two actuators
+  bool height_equal = false; // flag to indicate if the heights of the two actuators are equal
+
+init_wiringPi();
+
+// Set the GPIO pins for TRIG and ECHO of the two sensors as output and input respectively
+pinMode(TRIG_PIN_1, OUTPUT);
+pinMode(ECHO_PIN_1, INPUT);
+pinMode(TRIG_PIN_2, OUTPUT);
+pinMode(ECHO_PIN_2, INPUT);
+
+// Set the GPIO pins for controlling the actuators as output
+pinMode(ACTUATOR_1_UP_PIN, OUTPUT);
+pinMode(ACTUATOR_1_DOWN_PIN, OUTPUT);
+pinMode(ACTUATOR_2_UP_PIN, OUTPUT);
+pinMode(ACTUATOR_2_DOWN_PIN, OUTPUT);
+
+// Continuously monitor the heights of the two actuators
+while (1) {
+height_1 = read_height_from_sensor(TRIG_PIN_1, ECHO_PIN_1);
+height_2 = read_height_from_sensor(TRIG_PIN_2, ECHO_PIN_2);
+
+// Check if both heights are valid
+if (height_1 == -1 || height_2 == -1) {
+  continue;
+}
+
+// Height Difference Between Actuator 1 and Actuator 2
+height_diff = height_1 - height_2;
+
+// Check if the heights of the two actuators are equal
+if (height_diff > -HEIGHT_TOLERANCE && height_diff < HEIGHT_TOLERANCE) {
+  height_equal = true;
+} else {
+  height_equal = false;
+
+  // Move the actuators until they are at the same height
+  if (height_diff > 0) {
+    move_actuator_down(ACTUATOR_1_UP_PIN, ACTUATOR_1_DOWN_PIN);
+    move_actuator_up(ACTUATOR_2_UP_PIN, ACTUATOR_2_DOWN_PIN);
+  } else {
+    move_actuator_up(ACTUATOR_1_UP_PIN, ACTUATOR_1_DOWN_PIN);
+    move_actuator_down(ACTUATOR_2_UP_PIN, ACTUATOR_2_DOWN_PIN);
+  }
+}
+}
+
+return 0;
+}
