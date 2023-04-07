@@ -5,8 +5,13 @@
 #currently this uses an aglorithm developed by myself to determine the change in users position to send to the sensors
 #The program uses facial recognition currently, as a machine learning algorithm for shoulders has not been developed for the project yet
 #currently the script will constantly take the y value of a users face and move when the y position is outside of pre specified bounds
+#only focus on front user
+
+
+#to do - integrate with camera, track within a certain block (for smaller aoe), track closest to middle of
 import cv2
 import sys
+import socket
 
 val = 0
 ylst = []
@@ -18,9 +23,23 @@ def lst(ypos, yy):
 #the following two functions are for the actuators. Right now, it has a print statement as a placeholder. 
 def moveUp():
     print("Move system up")
+    #send signal to rpi
+    client_socket.send(b"move system up")
 
 def moveDown():
     print("Move system down")
+    #send signal to rpi
+    client_socket.send(b"move system down")
+
+def stay():
+    print("No need to move")
+    #send signal to rpi
+    client_socket.send(b"stay")
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = ('capstone.local', 12345)
+client_socket.connect(server_address) #connecting to server
+
 
 def moveCheck(lst):
     x = (len(lst)/2)
@@ -32,7 +51,7 @@ def moveCheck(lst):
     b = sum(B)/len(B)
     #print(a,b)
     if a-b >= -5 and a-b <= 5 : #user didnt move much
-        print("no need to move") #height remains the same
+        stay()
     elif a - b > 5: #user moved up
         moveUp()
     elif a - b < -5 :#user moved down
@@ -60,6 +79,10 @@ while True:
         flags=cv2.CASCADE_SCALE_IMAGE
     )
     yyy = 0
+    #print(str(len(faces)))
+    if len(faces) == 0:
+        #print("no face")
+        stay()
     #Draw a rectangle around the faces
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
@@ -69,7 +92,7 @@ while True:
         #ypos.append(y)
         #print (ypos)
 
-        #These two if statements are for checking the bounds of the detected face. 
+        #These two if statements are for checking the bounds of the detected face.
         if (y <= 25):
             moveUp()
 
@@ -111,5 +134,6 @@ while True:
         break
 
 # When everything is done, release the capture
+client_socket.close()
 video_capture.release()
 cv2.destroyAllWindows()
