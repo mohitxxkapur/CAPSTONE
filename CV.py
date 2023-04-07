@@ -7,8 +7,6 @@
 #currently the script will constantly take the y value of a users face and move when the y position is outside of pre specified bounds
 #only focus on front user
 
-
-#to do - integrate with camera, track within a certain block (for smaller aoe), track closest to middle of
 import cv2
 import sys
 import socket
@@ -20,7 +18,7 @@ ylst = []
 def lst(ypos, yy):
     ypos.append(yy)
 
-#the following two functions are for the actuators. Right now, it has a print statement as a placeholder. 
+#the following three functions are for the actuators.
 def moveUp():
     print("Move system up")
     #send signal to rpi
@@ -36,6 +34,7 @@ def stay():
     #send signal to rpi
     client_socket.send(b"stay")
 
+#Connecting to the server code running on the rpi
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('capstone.local', 12345)
 client_socket.connect(server_address) #connecting to server
@@ -79,6 +78,7 @@ while True:
         flags=cv2.CASCADE_SCALE_IMAGE
     )
     yyy = 0
+    #No Face detected
     #print(str(len(faces)))
     if len(faces) == 0:
         #print("no face")
@@ -110,7 +110,7 @@ while True:
             moveCheck(ylst)
 
         if (len(ylst) == 100):
-            #print("at 100: " + str(ylst)) #all print statments are for debugging
+            #print("at 100: " + str(ylst)) 
             i = -1
             spare = []
             for i in range(50):
