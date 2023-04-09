@@ -1,5 +1,5 @@
 #Mohit Kapur
-#Developed for ELG4192 - Electrical Engineering Final Capstone Project
+#Developed for Electrical Engineering Final Capstone Project
 
 #this is the first iteration of the CV code.
 #currently this uses an aglorithm developed by myself to determine the change in users position to send to the sensors
