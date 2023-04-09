@@ -3,7 +3,7 @@
 
 #this is the first iteration of the CV code.
 #currently this uses an aglorithm developed by myself to determine the change in users position to send to the sensors
-#The program uses facial recognition currently, as a machine learning algorithm for shoulders has not been developed for the project yet
+#The program uses facial detection.
 #currently the script will constantly take the y value of a users face and move when the y position is outside of pre specified bounds
 #only focus on front user
 
@@ -55,9 +55,6 @@ def moveCheck(lst):
         moveUp()
     elif a - b < -5 :#user moved down
         moveDown()
-    
-    #to optimize this function: connect the camera to this script, determine the ideal positions and from there set the bounds accordingly
-    #figure out what values actually entail movement, also look into updating the refresh rate. that might involve updating the bounds. 
 
 cascPath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
