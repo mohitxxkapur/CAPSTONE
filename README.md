@@ -7,5 +7,4 @@ haarcascade_frontalface_default.xml contains a series of cascading tests for the
 
 To run, please install a code editor capable of running Python, and download OpenCV with command _pip install opencv python_
 
-
-** Download cserver.c on raspberry pi to begin connection**
+**Download cserver.c and run it on a raspberry pi to begin connection**
